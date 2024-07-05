@@ -1,14 +1,13 @@
-import React, { useState, useRef } from 'react'
+import React, { useEffect, useRef, useState } from 'react'
 
 import ReactCrop, {
-  centerCrop,
-  makeAspectCrop,
   Crop,
   PixelCrop,
+  centerCrop,
   convertToPixelCrop,
+  makeAspectCrop,
 } from 'react-image-crop'
-import { canvasPreview } from './canvasPreview'
-import { useDebounceEffect } from './useDebounceEffect'
+import { canvasPreview } from './canvasPreview';
 
 import 'react-image-crop/dist/ReactCrop.css'
 
@@ -114,27 +113,23 @@ function ImageCrop() {
     }
   }
 
-  useDebounceEffect(
-    async () => {
-      if (
-        completedCrop?.width &&
-        completedCrop?.height &&
-        imgRef.current &&
-        previewCanvasRef.current
-      ) {
-        // We use canvasPreview as it's much faster than imgPreview.
-        canvasPreview(
-          imgRef.current,
-          previewCanvasRef.current,
-          completedCrop,
-          scale,
-          rotate,
-        )
-      }
-    },
-    100,
-    [completedCrop, scale, rotate],
-  )
+  useEffect(() => {
+    if (
+      completedCrop?.width &&
+      completedCrop?.height &&
+      imgRef.current &&
+      previewCanvasRef.current
+    ) {
+      // We use canvasPreview as it's much faster than imgPreview.
+      canvasPreview(
+        imgRef.current,
+        previewCanvasRef.current,
+        completedCrop,
+        scale,
+        rotate,
+      )
+    }
+  }, [completedCrop, scale, rotate]);
 
   function handleToggleAspectClick() {
     if (aspect) {
@@ -156,28 +151,32 @@ function ImageCrop() {
     <div className="App">
       <div className="Crop-Controls">
         <input type="file" accept="image/*" onChange={onSelectFile} />
-        <div>
-          <label htmlFor="scale-input">Scale: </label>
-          <input
-            id="scale-input"
-            type="number"
-            step="0.1"
-            value={scale}
-            disabled={!imgSrc}
-            onChange={(e) => setScale(Number(e.target.value))}
-          />
-        </div>
-        <div>
-          <label htmlFor="rotate-input">Rotate: </label>
-          <input
-            id="rotate-input"
-            type="number"
-            value={rotate}
-            disabled={!imgSrc}
-            onChange={(e) =>
-              setRotate(Math.min(180, Math.max(-180, Number(e.target.value))))
-            }
-          />
+        <div className="grid mb-6 md:grid-cols-2">
+          <div>
+            <div>
+              <label htmlFor="scale-input">Scale: </label>
+              <input
+                id="scale-input"
+                type="number"
+                step="0.1"
+                value={scale}
+                disabled={!imgSrc}
+                onChange={(e) => setScale(Number(e.target.value))}
+              />
+            </div>
+          </div>
+          <div>
+            <label htmlFor="rotate-input">Rotate: </label>
+            <input
+              id="rotate-input"
+              type="number"
+              value={rotate}
+              disabled={!imgSrc}
+              onChange={(e) =>
+                setRotate(Math.min(180, Math.max(-180, Number(e.target.value))))
+              }
+            />
+          </div>
         </div>
         <div>
           <button onClick={handleToggleAspectClick}>
@@ -193,7 +192,7 @@ function ImageCrop() {
           aspect={aspect}
           // minWidth={400}
           minHeight={100}
-          // circularCrop
+        // circularCrop
         >
           <img
             ref={imgRef}
