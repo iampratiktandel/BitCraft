@@ -1,15 +1,15 @@
-import { Button } from 'flowbite-react'
 import './App.css'
+import { Route, Routes } from 'react-router-dom'
+import Dashboard from './components/dashboard/Dashboard'
+import ImageCrop from './components/image-crop/ImageCrop'
 
 function App() {
 
   return (
-    <div>
-      <h1 className="text-3xl font-bold underline">
-        Hello world!
-      </h1>
-      <Button>Click me</Button>
-    </div>
+    <Routes>
+      <Route index element={<Dashboard />} />
+      <Route path='image-crop' element={<ImageCrop />} />
+    </Routes >
   )
 }
 
